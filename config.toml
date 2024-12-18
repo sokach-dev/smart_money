@@ -1,0 +1,20 @@
+# 其他配置项...
+database_url = "sqlite://./data.db"
+web_host_uri = "http://localhost:8080"
+solana_rpc_url = "https://api.mainnet-beta.solana.com"
+solana_wss_url = "wss://api.mainnet-beta.solana.com"
+
+[[monitor_addresses]]
+address = "address1"
+rule_type = "Buy"
+conditions = { price_below = 0.000001 }
+
+[[monitor_addresses]]
+address = "address2"
+rule_type = "Sell"
+conditions = { is_first_sell = true, partial_sell = true }
+
+[[monitor_addresses]]
+address = "address3"
+rule_type = "ProfitHolding"
+conditions = { profit_percentage = 100.0 }

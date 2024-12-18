@@ -33,7 +33,7 @@ async fn main() -> Result<()> {
     let c: config::Config = fs::read_to_string(&config_path).await?.parse()?;
     c.validate()?;
 
-    env::set_var("ANGEL_CONFIG", config_path);
+    env::set_var("SMART_CONFIG", config_path);
 
     utils::log::init_tracing();
 

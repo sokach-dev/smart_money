@@ -61,7 +61,7 @@ pub async fn start_server() -> Result<()> {
                 .into_inner(),
         );
 
-    let addr = TcpListener::bind(&c.host_uri).await.unwrap();
+    let addr = TcpListener::bind(&c.web_host_uri).await.unwrap();
     info!("Starting web server at {}", addr.local_addr()?);
     info!("add account: /api/v1/add_account?address=xxx");
     axum::serve(addr, app)
