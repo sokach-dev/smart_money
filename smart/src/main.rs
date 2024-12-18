@@ -1,6 +1,6 @@
 use std::env;
 
-use template::{config, daemon};
+use smart::{config, daemon};
 use anyhow::Result;
 use clap::{Parser, Subcommand};
 use tokio::fs;
@@ -8,7 +8,7 @@ use validator::Validate;
 #[derive(Parser)]
 #[clap(
     version = utils::version::get_version(), 
-    about = "Template project",
+    about = "smart money bot",
 )]
 #[clap(propagate_version = true)]
 struct Cli {
@@ -42,7 +42,7 @@ async fn main() -> Result<()> {
             daemon::daemon().await;
         }
         Some(Commands::Web) => {
-            template::web::start_server().await?;
+            smart::web::start_server().await?;
         }
         None => {
             println!("Please specify a subcommand");

@@ -2,3 +2,4 @@
 app.toml
 .env
 data
+.DS_Store
