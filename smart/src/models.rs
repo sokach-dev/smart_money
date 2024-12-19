@@ -31,46 +31,54 @@ pub async fn get_global_manager() -> &'static Arc<ModelsManager> {
         .await
 }
 
-#[derive(Debug, sqlx::FromRow, Serialize)]
-pub struct Coin {
-    pub id: i64,
-    pub account: String,
-    pub token: String,
-    pub created_at: i64,
-    pub deleted: i64,
-}
+// -- create spl_token table in sqlite3
+// CREATE TABLE spl_token (
+//     mint TEXT PRIMARY KEY, -- mint address
+//     smart_address TEXT NOT NULL, -- smart address, who related to this token
+//     monitor_status TEXT NOT NULL DEFAULT 'active', -- monitor status
+//     strategy_name TEXT NOT NULL, -- strategy name
+//     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- created at
+//     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- updated at
+// );
 
 #[derive(Debug, sqlx::FromRow, Serialize)]
-pub struct Account {
-    pub id: i64,
-    pub account: String,
+pub struct SplToken {
+    pub mint: String,
+    pub smart_address: String,
+    pub monitor_status: String,
+    pub strategy_name: String,
     pub created_at: i64,
-    pub deleted: i64,
+    pub updated_at: i64,
 }
 
 impl ModelsManager {
-    pub async fn add_new_account(&self, mint: String) -> Result<()> {
-        // judge if the account exists
+    pub async fn add_new_spl_token(
+        &self,
+        mint: &str,
+        smart_address: &str,
+        strategy_name: &str,
+    ) -> Result<()> {
+        // judge if the spl token exists
         let sql_str = format!(
-            "SELECT * FROM accounts WHERE account = '{}' AND DELETED = 0;",
-            mint
+            "SELECT * FROM spl_token WHERE mint = '{}' 
+            AND monitor_status = 'active' 
+            AND strategy_name = '{}'
+            AND smart_address = '{}'",
+            mint, strategy_name, smart_address
         );
-        let account = sqlx::query_as::<_, Account>(&sql_str)
-            .fetch_one(&self.pool)
-            .await
-            .ok();
-        if account.is_some() {
+        let row = sqlx::query_as::<_, SplToken>(&sql_str)
+            .fetch_optional(&self.pool)
+            .await?;
+        if row.is_some() {
             return Ok(());
         }
-
-        // insert new account
+        // insert new spl token
         let sql_str = format!(
-            "INSERT INTO accounts (account, created_at, deleted) VALUES ('{}', {}, 0);",
-            mint,
-            chrono::Local::now().timestamp()
+            "INSERT INTO spl_token (mint, smart_address, strategy_name) 
+            VALUES ('{}', '{}', '{}')",
+            mint, smart_address, strategy_name
         );
         sqlx::query(&sql_str).execute(&self.pool).await?;
-
         Ok(())
     }
 }

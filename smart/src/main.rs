@@ -32,17 +32,16 @@ async fn main() -> Result<()> {
     let config_path = cli.config;
     let c: config::Config = fs::read_to_string(&config_path).await?.parse()?;
     c.validate()?;
-
     env::set_var("SMART_CONFIG", config_path);
-
     utils::log::init_tracing();
+
 
     match cli.command {
         Some(Commands::Daemon) => {
-            daemon::daemon().await;
+            daemon::daemon().await?;
         }
         Some(Commands::Web) => {
-            smart::web::start_server().await?;
+            // smart::web::start_server().await?;
         }
         None => {
             println!("Please specify a subcommand");

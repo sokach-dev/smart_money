@@ -1,4 +1,4 @@
-use crate::{config::get_global_config, models::get_global_manager};
+use crate::config::get_global_config;
 use anyhow::Result;
 use axum::{
     error_handling::HandleErrorLayer,
@@ -78,16 +78,7 @@ struct AddAccount {
 }
 
 async fn add_account(input: Query<AddAccount>) -> impl IntoResponse {
-    if input.address.len() != 44 {
-        return CustomResponse::err("address length is not 44".to_string()).to_json();
-    }
-
-    let manager = get_global_manager().await;
-    if let Err(e) = manager.add_new_account(input.address.clone()).await {
-        return CustomResponse::err(e.to_string()).to_json();
-    }
-
-    CustomResponse::<i32>::ok(None).to_json()
+    todo!()
 }
 
 async fn shoutdown_signal() {

@@ -4,6 +4,8 @@ use std::{env, str::FromStr, sync::Arc};
 use tokio::{fs, sync::OnceCell};
 use validator::Validate;
 
+use crate::strategies::MonitorRule;
+
 #[derive(Clone, Debug, Validate, Deserialize)]
 pub struct Config {
     #[validate(length(min = 1))]
@@ -14,10 +16,8 @@ pub struct Config {
     pub solana_rpc_url: String, // solana rpc url
     #[validate(length(min = 1))]
     pub solana_wss_url: String, // solana wss url
-    #[validate(length(min = 1))]
-    pub strategies_file_path: String, // strategies file path
-    #[validate(range(min = 1))]
-    pub upload_strategy_file_interval: u32, // upload strategy file interval seconds
+
+    pub monitors: Vec<MonitorRule>, // monitor rules
 }
 
 impl FromStr for Config {
